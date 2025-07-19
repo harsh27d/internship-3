@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - CodeAlpha Social</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url("intern 3 moon.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-black bg-opacity-50 backdrop-blur">
+
+  <!-- Register Container -->
+  <div class="bg-white bg-opacity-90 p-8 rounded-xl shadow-xl w-full max-w-md transition duration-300 hover:shadow-2xl">
+    <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Create an Account</h1>
+
+    <!-- Make sure enctype is added -->
+    <form id="registerForm" class="space-y-4" enctype="multipart/form-data" method="POST">
+      <input type="text" id="username" name="username" placeholder="Username"
+             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      
+      <input type="email" id="email" name="email" placeholder="Email"
+             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      
+      <input type="password" id="password" name="password" placeholder="Password"
+             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+
+      <!-- Profile Image Upload -->
+      <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*"
+             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition">
+        Register
+      </button>
+    </form>
+
+    <p class="mt-4 text-center text-sm text-gray-700">
+      Already have an account?
+      <a href="login.html" class="text-blue-600 hover:underline">Login</a>
+    </p>
+  </div>
+
+  <script src="js/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - CodeAlpha Social</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-blue-50 min-h-screen text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-blue-400 shadow p-5 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-4">
+      <a href="feed.html"
+         class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold flex items-center gap-2 shadow">
+        <i class="fas fa-arrow-left"></i>
+        Go to Feed
+      </a>
+      <h1 class="text-2xl font-bold text-blue-800 tracking-wide flex items-center gap-3">
+        <i class="fas fa-globe text-blue-200"></i>
+        <span>CodeAlpha Social</span>
+      </h1>
+    </div>
+    <div class="flex gap-4 items-center">
+      <button onclick="logout()" 
+              class="px-4 py-2 bg-red-400 hover:bg-red-600 text-white rounded-lg font-semibold flex items-center gap-2 shadow">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Profile Layout -->
+  <main class="container mx-auto mt-8 px-4 sm:px-12 max-w-4xl">
+    <section class="bg-white rounded-2xl shadow-lg p-8 sm:p-10 flex flex-col items-center">
+      <!-- Avatar -->
+      <img id="profileAvatar"
+           src="https://via.placeholder.com/120"
+           class="w-32 h-32 rounded-full border-4 border-blue-200 shadow-lg mb-4 object-cover"
+           alt="Profile">
+      <h2 id="profileName" class="text-2xl font-extrabold text-blue-800 mb-1">Your Name</h2>
+      <p id="profileEmail" class="text-blue-600 mb-3">youremail@example.com</p>
+      <button class="px-6 py-2 rounded-lg font-semibold bg-blue-500 text-white hover:bg-blue-600 transition mb-6">
+        <i class="fas fa-edit mr-2"></i> Edit Profile
+      </button>
+
+      <!-- Stats -->
+      <div class="flex gap-8 text-center mb-6">
+        <div>
+          <div id="postCount" class="text-xl font-bold text-blue-700">0</div>
+          <div class="text-xs text-blue-400">Posts</div>
+        </div>
+        <div>
+          <div id="friendCount" class="text-xl font-bold text-blue-700">0</div>
+          <div class="text-xs text-blue-400">Friends</div>
+        </div>
+        <div>
+          <div id="joinDate" class="text-xl font-bold text-blue-700">-</div>
+          <div class="text-xs text-blue-400">Joined</div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="w-full bg-blue-50 p-6 rounded-xl mb-7">
+        <h3 class="font-bold text-blue-700 mb-2 text-lg">About</h3>
+        <p id="profileBio" class="text-gray-700">Add a short bio to let others know more about you!</p>
+      </div>
+
+      <!-- Posts -->
+      <div class="w-full">
+        <h3 class="font-bold text-blue-700 mb-4 text-lg">Your Posts</h3>
+        <div id="profilePosts" class="grid grid-cols-1 gap-4"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Load user info if logged in
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.username) {
+      alert("Please login first");
+      window.location.href = "login.html";
+    } else {
+      // Display user info (ready for real backend)
+      if (user.profile_image) {
+        document.getElementById('profileAvatar').src = 'uploads/' + user.profile_image;
+      }
+      document.getElementById('profileName').textContent = user.username;
+      document.getElementById('profileEmail').textContent = user.email;
+      document.getElementById('joinDate').textContent = user.joined_at || "2025";
+      document.getElementById('profileBio').textContent = user.bio || "No bio set yet. Edit your profile to add more!";
+      // Example stats (update with your backend)
+      document.getElementById('postCount').textContent = "3";
+      document.getElementById('friendCount').textContent = "14";
+    }
+
+    // Demo posts
+    const demoPosts = [
+      { content: "Just launched my CodeAlpha profile!", date: "Today" },
+      { content: "Excited to connect with more devs. 🚀", date: "Yesterday" },
+      { content: "Just shared my first public post!", date: "3 days ago" }
+    ];
+    const postsDiv = document.getElementById('profilePosts');
+    demoPosts.forEach(post => {
+      const div = document.createElement('article');
+      div.className = 'bg-white border-l-4 border-blue-300 shadow-md rounded-lg p-5';
+      div.innerHTML = `
+        <div class="text-gray-700 mb-2">${post.content}</div>
+        <div class="flex items-center justify-between text-xs text-blue-400">
+          <span>${post.date}</span>
+          <span>
+            <i class="fas fa-thumbs-up mr-1"></i>8
+            <i class="fas fa-comment-alt ml-4 mr-1"></i>2
+          </span>
+        </div>
+      `;
+      postsDiv.appendChild(div);
+    });
+
+    // Logout function (clicking the red button runs this)
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>

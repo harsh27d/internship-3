@@ -1,0 +1,15 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# File uploads or temp folders
+uploads/
+
+# Logs
+*.log
+
+# OS-specific junk
+.DS_Store
+Thumbs.db

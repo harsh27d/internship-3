@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Games - CodeAlpha Social</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    .game-card {
+      min-width: 350px;
+      max-width: 350px;
+      margin-right: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid #6366f1;
+      background: #fafaff;
+    }
+    .game-card:hover {
+      box-shadow: 0 6px 30px rgba(99,102,241,0.18);
+      border-color: #a21caf;
+      transform: translateY(-8px) scale(1.025);
+    }
+    .games-carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+    }
+    .games-carousel::-webkit-scrollbar { height: 8px; }
+    .games-carousel::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 10px; }
+    .arrow-btn {
+      background: #fff;
+      border: 2px solid #a21caf;
+      color: #a21caf;
+      border-radius: 50%;
+      font-size: 2rem;
+      width: 2.75rem;
+      height: 2.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 43%;
+      z-index: 10;
+      transition: box-shadow 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .arrow-btn:hover { background: #a21caf; color: #fff; }
+    .arrow-left { left: -1.2rem; }
+    .arrow-right { right: -1.2rem; }
+    @media(max-width: 400px) {
+      .game-card { min-width: 90vw; max-width: 90vw; }
+    }
+    canvas { display: block; outline: 2px solid #a21caf; }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-indigo-100 via-purple-100 to-indigo-300 min-h-screen font-sans">
+  <!-- Header -->
+  <header class="bg-blue-400 shadow p-5 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-4">
+      <a href="feed.html"
+         class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold flex items-center gap-2 shadow">
+        <i class="fas fa-arrow-left"></i>
+        Go to Feed
+      </a>
+      <h1 class="text-2xl font-bold text-blue-800 tracking-wide flex items-center gap-3">
+        <i class="fas fa-globe text-blue-200"></i>
+        <span>CodeAlpha Social</span>
+      </h1>
+    </div>
+   
+  </header>
+  <div class="max-w-5xl mx-auto py-10 px-6 bg-white shadow-md rounded-lg">
+    <h1 class="text-3xl font-bold text-green-700 mb-6">Your Social Network</h1>
+
+  <div class="max-w-4xl mx-auto mt-10 mb-20 bg-white rounded-2xl shadow-2xl p-8 relative">
+    <h1 class="text-3xl font-extrabold mb-6 text-purple-600 flex items-center gap-4">
+      <i class="fas fa-gamepad"></i>Games Zone
+    </h1>
+    <p class="text-gray-700 mb-7 text-lg">Relax and play! Slide&nbsp;→ for more games.</p>
+
+    <!-- Arrow Buttons -->
+    <button class="arrow-btn arrow-left" onclick="scrollGames(-1)" title="Previous"><i class="fas fa-chevron-left"></i></button>
+    <button class="arrow-btn arrow-right" onclick="scrollGames(1)" title="Next"><i class="fas fa-chevron-right"></i></button>
+
+    <div id="gamesCarousel" class="games-carousel pb-3">
+      <!-- SNAKE GAME CARD -->
+      <div class="game-card rounded-xl shadow p-6 flex flex-col items-center">
+        <h2 class="text-2xl mb-2 font-semibold text-purple-700 flex items-center"><i class="fas fa-apple-alt mr-2"></i>Snake</h2>
+        <div class="mb-2 text-gray-600 text-center">Eat apples, don't hit walls. Use arrow keys!</div>
+        <div id="snakeCanvasContainer" class="relative mb-2">
+          <canvas id="snake" width="330" height="330" class="rounded-lg"></canvas>
+          <div id="snakeStartOverlay" class="rounded-lg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:2;">
+            <button id="snakePlayBtn" class="px-6 py-3 bg-purple-700 hover:bg-blue-600 text-white rounded-lg font-bold shadow-lg transition">Play Now</button>
+          </div>
+        </div>
+        <span class="text-gray-700 text-md">Score: <b id="snakeScore">0</b></span>
+        <button onclick="resetSnake()" class="mt-3 px-4 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded font-semibold transition">Restart</button>
+      </div>
+
+      <!-- TIC TAC TOE CARD -->
+      <div class="game-card rounded-xl shadow p-6 flex flex-col items-center">
+        <h2 class="text-2xl mb-2 font-semibold text-teal-600 flex items-center"><i class="fas fa-times-circle mr-2"></i>Tic Tac Toe</h2>
+        <div class="mb-2 text-gray-600 text-center">Two player: click to place X or O</div>
+        <div id="ttt" class="grid grid-cols-3 gap-1 rounded-lg bg-gray-200 mt-3"
+             style="width:220px;height:220px;box-sizing:content-box;"></div>
+        <div id="tttStatus" class="mt-2 mb-1 text-md text-teal-700 font-semibold">X's turn</div>
+        <button onclick="resetTtt()" class="mt-1 px-4 py-1 bg-teal-700 hover:bg-teal-800 text-white rounded font-semibold transition">Restart</button>
+      </div>
+
+      <!-- TETRIS GAME CARD -->
+      <div class="game-card rounded-xl shadow p-6 flex flex-col items-center">
+        <h2 class="text-2xl mb-2 font-semibold text-blue-600 flex items-center"><i class="fas fa-cubes mr-2"></i>Tetris</h2>
+        <div class="mb-2 text-gray-600 text-center">Arrow keys: ←→ move, ↑ rotate, ↓ drop</div>
+        <canvas id="tetris" width="170" height="300" class="rounded-lg mb-2 bg-gray-200"></canvas>
+        <span class="text-gray-700 text-md">Score: <b id="tetrisScore">0</b></span>
+        <button onclick="restartTetris()" class="mt-2 px-4 py-1 bg-blue-600 hover:bg-purple-700 text-white rounded font-semibold transition">Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function scrollGames(dir) {
+      document.getElementById('gamesCarousel').scrollBy({left: dir * 350, behavior: "smooth"});
+    }
+
+    // SNAKE GAME LOGIC (No auto-start)
+    const snakeCanvas = document.getElementById('snake');
+    const snakeCtx = snakeCanvas.getContext('2d');
+    const snakeStartOverlay = document.getElementById('snakeStartOverlay');
+    const snakePlayBtn = document.getElementById('snakePlayBtn');
+    let snake, direction, apple, dead, score, snakeLoop, snakePlaying = false;
+    const sbox = 30, srows = 11, scols = 11;
+
+    function snakeDraw() {
+      snakeCtx.clearRect(0,0,snakeCanvas.width,snakeCanvas.height);
+      let g1 = snakeCtx.createLinearGradient(0, 0, snakeCanvas.width, snakeCanvas.height);
+      g1.addColorStop(0, "#f3e8ff"); g1.addColorStop(1, "#ede9fe");
+      snakeCtx.fillStyle = g1;
+      snakeCtx.fillRect(0,0,snakeCanvas.width,snakeCanvas.height);
+
+      // Apple
+      snakeCtx.beginPath();
+      snakeCtx.arc(apple.x*sbox+sbox/2, apple.y*sbox+sbox/2, sbox/2-2, 0, Math.PI*2);
+      snakeCtx.fillStyle = "#f43f5e";
+      snakeCtx.fill();
+
+      // Snake
+      snake.forEach((seg, i) => {
+        snakeCtx.fillStyle = i==0 ? "#a21caf" : "#38bdf8";
+        snakeCtx.fillRect(seg.x*sbox, seg.y*sbox, sbox-2, sbox-2);
+        if(i==0){
+          snakeCtx.strokeStyle = "#c026d3";
+          snakeCtx.strokeRect(seg.x*sbox, seg.y*sbox, sbox-2, sbox-2);
+        }
+      });
+
+      if (dead) {
+        snakeCtx.globalAlpha = 0.8;
+        snakeCtx.fillStyle = '#1e293b';
+        snakeCtx.fillRect(0, snakeCanvas.height/2 - 40, snakeCanvas.width, 80);
+        snakeCtx.globalAlpha = 1.0;
+        snakeCtx.font = "bold 32px sans-serif";
+        snakeCtx.fillStyle = "#fff";
+        snakeCtx.fillText('GAME OVER', 60, snakeCanvas.height/2 + 10);
+        snakeCtx.font = "18px sans-serif";
+        snakeCtx.fillStyle = "#eab308";
+        snakeCtx.fillText('Score: ' + score, 110, snakeCanvas.height/2 + 36);
+      }
+    }
+    function randomApple() {
+      let x, y;
+      do {
+        x = Math.floor(Math.random()*scols);
+        y = Math.floor(Math.random()*srows);
+      } while (snake.some(segment => segment.x===x && segment.y===y));
+      return {x, y};
+    }
+    function updateSnake() {
+      if (!snakePlaying || dead) return;
+      const nx = snake[0].x + direction.x, ny = snake[0].y + direction.y;
+      if (nx<0||nx>=scols||ny<0||ny>=srows || snake.some(s=>s.x===nx&&s.y===ny)) {
+        dead = true; snakeDraw(); return;
+      }
+      snake.unshift({x:nx, y:ny});
+      if (nx===apple.x && ny===apple.y) {
+        score++;
+        document.getElementById('snakeScore').textContent = score;
+        apple = randomApple();
+      } else snake.pop();
+      snakeDraw();
+    }
+    function snakeGameLoop() {
+      if (snakePlaying && !dead) updateSnake();
+      if (snakePlaying && !dead) snakeLoop = setTimeout(snakeGameLoop, 175);
+    }
+    document.addEventListener('keydown', e => {
+      if (!snakePlaying || dead) return;
+      let k = e.key;
+      if (k==="ArrowUp" && direction.y===0) direction = {x:0, y:-1};
+      if (k==="ArrowDown" && direction.y===0) direction = {x:0, y:1};
+      if (k==="ArrowLeft" && direction.x===0) direction = {x:-1, y:0};
+      if (k==="ArrowRight" && direction.x===0) direction = {x:1, y:0};
+      if (dead && ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(k)) resetSnake();
+    });
+    function resetSnake() {
+      clearTimeout(snakeLoop);
+      snake = [{x:5,y:5}];
+      direction = {x:1, y:0};
+      apple = randomApple();
+      dead = false;
+      score = 0;
+      document.getElementById('snakeScore').textContent = score;
+      snakeDraw();
+      snakePlaying = false;
+      snakeStartOverlay.style.display = 'flex';
+    }
+    snakePlayBtn.onclick = function() {
+      snakePlaying = true;
+      snakeStartOverlay.style.display = 'none';
+      snakeGameLoop();
+    };
+    resetSnake();
+
+    // TIC TAC TOE GAME LOGIC (Two player on same computer)
+    const tttBoard = document.getElementById('ttt');
+    let tttCells = [], tttCurrent = "X", tttGameActive = true;
+    function drawTtt() {
+      tttBoard.innerHTML = '';
+      tttCells = new Array(9).fill('');
+      for(let i=0; i<9; ++i){
+        const cell = document.createElement('div');
+        cell.className = "bg-white cursor-pointer flex items-center justify-center text-3xl font-bold h-16 w-16 border hover:bg-gray-100 transition";
+        cell.dataset.i = i;
+        cell.onclick = () => tttClick(i, cell);
+        tttBoard.appendChild(cell);
+      }
+      document.getElementById('tttStatus').textContent = "X's turn";
+      tttCurrent = "X";
+      tttGameActive = true;
+    }
+    function tttClick(i, cell){
+      if(!tttGameActive || tttCells[i]) return;
+      tttCells[i] = tttCurrent;
+      cell.textContent = tttCurrent;
+      if(tttCheckWin(tttCurrent)){
+        document.getElementById('tttStatus').textContent = tttCurrent + " wins!";
+        tttGameActive = false;
+        return;
+      }
+      if(tttCells.every(c => c)) {
+        document.getElementById('tttStatus').textContent = "Draw!";
+        tttGameActive = false;
+        return;
+      }
+      tttCurrent = tttCurrent==='X' ? 'O' : 'X';
+      document.getElementById('tttStatus').textContent = tttCurrent+"'s turn";
+    }
+    function tttCheckWin(player) {
+      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      return wins.some(combo => combo.every(idx => tttCells[idx] === player));
+    }
+    function resetTtt(){
+      drawTtt();
+    }
+    drawTtt();
+
+    // TETRIS GAME LOGIC (simple playable)
+    const tetCanvas = document.getElementById('tetris');
+    const tetCtx = tetCanvas.getContext('2d');
+    const tetCols = 10, tetRows = 18, tetSize = 15;
+    const tetShapes = [
+      [[1,1,1,1]], // I
+      [[1,1],[1,1]], // O
+      [[0,1,0],[1,1,1]], // T
+      [[1,0,0],[1,1,1]], // J
+      [[0,0,1],[1,1,1]], // L
+      [[1,1,0],[0,1,1]], // S
+      [[0,1,1],[1,1,0]]  // Z
+    ];
+    const tetColors = ['#eab308','#f43f5e','#38bdf8','#a21caf','#6366f1','#14b8a6','#f59e42'];
+    let tetBoard, tetPiece, tetX, tetY, tetShape, tetColor, tetScore=0, tetriLoop, tetriActive=true;
+
+    function tetReset(){
+      tetBoard = Array.from({length:tetRows},()=>Array(tetCols).fill(0));
+      tetScore=0;document.getElementById('tetrisScore').textContent=0;
+      tetSpawn();
+      tetriActive=true;
+      drawTet();
+      clearTimeout(tetriLoop);
+      tetriGameLoop();
+    }
+    function tetSpawn(){
+      let idx = Math.floor(Math.random()*tetShapes.length);
+      tetShape = tetShapes[idx];
+      tetColor = tetColors[idx];
+      tetX = Math.floor((tetCols-tetShape[0].length)/2);
+      tetY = 0;
+      tetPiece = tetShape.map(row=>row.slice());
+      if (tetCollision(tetX, tetY, tetPiece)) tetriActive=false;
+    }
+    function tetCollision(x, y, shape){
+      for(let r=0;r<shape.length;r++)
+        for(let c=0;c<shape[0].length;c++)
+          if(shape[r][c] && (
+            y+r>=tetRows || x+c<0 || x+c>=tetCols || tetBoard[y+r][x+c]))
+            return true;
+      return false;
+    }
+    function drawTet(){
+      tetCtx.clearRect(0,0,tetCanvas.width,tetCanvas.height);
+      for(let r=0;r<tetRows;r++)
+        for(let c=0;c<tetCols;c++){
+          if(tetBoard[r][c]){
+            tetCtx.fillStyle=tetBoard[r][c]; 
+            tetCtx.fillRect(c*tetSize,r*tetSize,tetSize-1,tetSize-1);
+          }
+        }
+      for(let r=0;r<tetPiece.length;r++)
+        for(let c=0;c<tetPiece[0].length;c++){
+          if(tetPiece[r][c]){
+            tetCtx.fillStyle=tetColor;
+            tetCtx.fillRect((tetX+c)*tetSize,(tetY+r)*tetSize,tetSize-1,tetSize-1);
+          }
+        }
+    }
+    function tetLock(){
+      for(let r=0;r<tetPiece.length;r++)
+        for(let c=0;c<tetPiece[0].length;c++)
+          if(tetPiece[r][c]) tetBoard[tetY+r][tetX+c]=tetColor;
+      for(let r=tetRows-1;r>=0;r--){
+        if(tetBoard[r].every(v=>v)){
+          tetBoard.splice(r,1);tetBoard.unshift(Array(tetCols).fill(0));tetScore+=10;
+          document.getElementById('tetrisScore').textContent = tetScore;
+          r++;
+        }
+      }
+      tetSpawn();
+    }
+    function tetriGameLoop(){
+      if(!tetriActive)return;
+      if(!tetCollision(tetX,tetY+1,tetPiece)) tetY++;
+      else { tetLock(); }
+      drawTet();
+      tetriLoop=setTimeout(tetriGameLoop,300);
+    }
+    document.addEventListener('keydown',e=>{
+      if(!tetriActive)return;
+      if(document.activeElement.tagName==="INPUT")return;
+      if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp'].includes(e.key)){
+        e.preventDefault();
+        let nx=tetX,ny=tetY,nsh=tetPiece;
+        if(e.key==='ArrowLeft'){nx--;}
+        if(e.key==='ArrowRight'){nx++;}
+        if(e.key==='ArrowDown'){ny++;}
+        if(e.key==='ArrowUp'){
+          nsh = nsh[0].map((_, i) => nsh.map(row => row[i])).reverse();
+        }
+        if(!tetCollision(nx,ny,nsh)){
+          tetX=nx;tetY=ny;tetPiece=nsh;
+        }else if(e.key==='ArrowDown'){tetLock();}
+        drawTet();
+      }
+    });
+    function restartTetris() {tetReset();}
+    tetReset();
+  </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed - CodeAlpha Social</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/f7fe11c06c.js" crossorigin="anonymous"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    textarea::placeholder { color: #9ca3af; opacity: 1; }
+  </style>
+</head>
+<body class="bg-blue-50 font-sans min-h-screen">
+
+<!-- Topbar -->
+<header class="bg-blue-400 shadow-lg p-5 flex justify-between items-center sticky top-0 z-50">
+  <h1 class="text-2xl font-bold text-blue-800 tracking-wide flex items-center gap-3">
+    <i class="fas fa-globe text-blue-200"></i> CodeAlpha Social
+  </h1>
+  <div class="hidden sm:block w-1/3 relative">
+    <input type="text" placeholder="Search..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-blue-300 focus:border-blue-400">
+    <i class="fas fa-search absolute left-3 top-3 text-blue-700"></i>
+  </div>
+  <div class="flex gap-6 text-blue-800 text-xl">
+    <a href="index.html" title="Home" class="hover:text-blue-100"><i class="fas fa-home"></i></a>
+    <a href="#" title="Notifications" class="hover:text-blue-100"><i class="fas fa-bell"></i></a>
+    <a href="#" title="Messages" class="hover:text-blue-100"><i class="fas fa-envelope"></i></a>
+    <a href="profile.html" title="Profile" class="hover:text-blue-100"><i class="fas fa-user-circle"></i></a>
+    <a href="#" onclick="logout()" title="Logout" class="hover:text-red-300"><i class="fas fa-sign-out-alt"></i></a>
+  </div>
+</header>
+
+<!-- Main Layout -->
+<main class="container mx-auto mt-8 px-4 sm:px-6 flex flex-col sm:flex-row gap-8 max-w-7xl">
+
+  <!-- Sidebar -->
+  <aside class="w-full sm:w-72 h-fit bg-blue-400 p-7 rounded-2xl shadow-lg sticky top-24">
+    <div>
+      <h2 class="font-bold text-lg mb-6 text-blue-900 tracking-wider">Menu</h2>
+      <ul class="flex flex-col gap-6 text-blue-800 font-medium text-lg pl-2">
+        <li><a href="profile.html" class="flex items-center gap-4 hover:text-blue-100"><i class="fas fa-user text-blue-100"></i>Profile</a></li>
+        <li><a href="friends.html" class="flex items-center gap-4 hover:text-blue-100"><i class="fas fa-user-friends text-green-100"></i>Friends</a></li>
+        <li><a href="saved.html" class="flex items-center gap-4 hover:text-blue-100"><i class="fas fa-bookmark text-purple-100"></i>Saved</a></li>
+        <li><a href="feed.html" class="flex items-center gap-4 text-blue-100 font-bold"><i class="fas fa-rss text-yellow-100"></i>Feed</a></li>
+        <li><a href="groups.html" class="flex items-center gap-4 hover:text-blue-100"><i class="fas fa-users text-pink-100"></i>Groups</a></li>
+        <li><a href="marketplace.html" class="flex items-center gap-4 hover:text-blue-100"><i class="fas fa-store text-indigo-100"></i>Marketplace</a></li>
+        <li><a href="games.html" class="flex items-center gap-4 hover:text-blue-100"><i class="fas fa-gamepad text-red-100"></i>Games</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Feed Section -->
+  <section class="flex-1 sm:max-w-xl space-y-8">
+    <!-- Post Box -->
+    <article class="bg-white p-7 rounded-2xl shadow-lg">
+      <div class="flex gap-5 mb-6">
+        <img id="postUserPhoto" src="https://via.placeholder.com/48" class="rounded-full w-14 h-14 object-cover border-2 border-blue-300" alt="User">
+        <textarea id="postContent" placeholder="What's on your mind?" class="flex-1 border border-blue-300 p-4 rounded-lg h-28 resize-none focus:border-blue-500"></textarea>
+      </div>
+      <div class="text-right">
+        <button onclick="createPost()" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-medium tracking-wider">Post</button>
+      </div>
+    </article>
+    <!-- Post Loader -->
+    <div id="feed" class="space-y-8"></div>
+  </section>
+
+  <!-- Sponsored Section -->
+  <aside class="w-full sm:w-80 h-fit bg-blue-400 p-7 rounded-2xl shadow-lg sticky top-24">
+    <div>
+      <h2 class="font-bold text-lg mb-6 text-blue-900 tracking-wider">Sponsored</h2>
+      <div class="mb-8">
+        <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?fit=crop&w=400&q=80" class="rounded-xl w-full mb-3" alt="Ad">
+        <p class="text-md font-semibold text-blue-900">Upgrade your tech today!</p>
+        <p class="text-xs text-blue-100">Sponsored by TechCorp</p>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=400&q=80" class="rounded-xl w-full mb-3" alt="Ad">
+        <p class="text-md font-semibold text-blue-900">Try our new coding course!</p>
+        <p class="text-xs text-blue-100">Sponsored by CodeAlpha</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Post/Feed Logic -->
+<script>
+  // Get logged-in user from localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
+  const feed = document.getElementById("feed");
+  const postUserPic = document.getElementById('postUserPhoto');
+
+  // Redirect to login if not logged in
+  if (!user || !user.username) {
+    alert("Please login first");
+    window.location.href = 'login.html';
+  }
+
+  // Update user image (if available)
+  if (user.profile_image) {
+    postUserPic.src = `uploads/${user.profile_image}`;
+  }
+
+  // Create a new post
+  function createPost() {
+    const content = document.getElementById("postContent").value.trim();
+    if (!content) return;
+
+    const post = document.createElement("article");
+    post.className = "bg-white p-7 rounded-2xl shadow-lg";
+
+    const now = new Date().toLocaleString();
+    const userImg = user.profile_image ? `uploads/${user.profile_image}` : "https://via.placeholder.com/48";
+
+    post.innerHTML = `
+      <div class="flex items-center gap-4 mb-4">
+        <img src="${userImg}" class="rounded-full w-12 h-12 object-cover border-2 border-blue-300" alt="User">
+        <div>
+          <p class="font-semibold text-gray-700">${user.username}</p>
+          <p class="text-xs text-gray-400">Posted at ${now}</p>
+        </div>
+      </div>
+      <p class="text-gray-700 mb-5">${content.replace(/\n/g, '<br>')}</p>
+      <div class="flex border-t pt-3 text-sm text-gray-500 gap-5">
+        <button class="hover:text-blue-500"><i class="far fa-thumbs-up mr-1"></i> Like</button>
+        <button class="hover:text-blue-500"><i class="far fa-comment mr-1"></i> Comment</button>
+        <button class="hover:text-blue-500"><i class="far fa-share-square mr-1"></i> Share</button>
+      </div>
+    `;
+    feed.prepend(post);
+    document.getElementById("postContent").value = "";
+  }
+
+  // Logout function
+  function logout() {
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+  }
+
+  // Load demo posts on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const samplePosts = [
+      "🙌 Welcome to your new social feed!",
+      "📱 Loving the light blue color scheme!",
+      "🚀 Created this post using CodeAlpha Social."
+    ];
+    samplePosts.forEach(text => {
+      document.getElementById("postContent").value = text;
+      createPost();
+    });
+  });
+</script>
+</body>
+</html>
